@@ -1,26 +1,43 @@
 (() => {
   'use strict'
 
-  const getStoredTheme = () => localStorage.getItem('theme')
-  const setStoredTheme = theme => localStorage.setItem('theme', theme)
+  // Keep in sync with Wiki/ci/lib/tfg-theme.mjs (light/dark only in UI)
+  const TFG_THEME_KEY = 'tfg-theme'
+  const DEFAULT_THEME = 'dark'
 
-  const getPreferredTheme = () => {
-    const storedTheme = getStoredTheme()
+  const normalizeTheme = value => (value === 'light' || value === 'dark' ? value : null)
 
-    if (storedTheme) {
-      return storedTheme
+  const systemTheme = () =>
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+
+  const readStoredTheme = () => {
+    const stored = normalizeTheme(localStorage.getItem(TFG_THEME_KEY))
+    if (stored) {
+      return stored
     }
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    const preference = localStorage.getItem(TFG_THEME_KEY)
+    if (preference === 'auto') {
+      return systemTheme()
+    }
+
+    return DEFAULT_THEME
   }
 
-  /** Bootstrap + EMI use resolved light/dark (auto → system). */
+  const writeStoredTheme = theme => {
+    const normalized = normalizeTheme(theme)
+    if (!normalized) {
+      return
+    }
+    localStorage.setItem(TFG_THEME_KEY, normalized)
+  }
+
   const resolvedTheme = () => {
     const bs = document.documentElement.getAttribute('data-bs-theme')
     if (bs === 'light' || bs === 'dark') {
       return bs
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    return readStoredTheme()
   }
 
   const notifyHandbookThemeChange = () => {
@@ -32,64 +49,51 @@
   }
 
   const setTheme = theme => {
-    if (theme === 'auto') {
-      document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
-    } else {
-      document.documentElement.setAttribute('data-bs-theme', theme)
-    }
+    const normalized = normalizeTheme(theme) || DEFAULT_THEME
+    document.documentElement.setAttribute('data-bs-theme', normalized)
     notifyHandbookThemeChange()
+    return normalized
   }
 
-  setTheme(getPreferredTheme())
-
-  const showActiveTheme = (theme, focus = false) => {
-    const themeSwitcher = document.querySelector('#bd-theme')
-
-    if (!themeSwitcher) {
+  const updateThemeButton = theme => {
+    const lightIcon = document.querySelector('#bd-theme-icon-light')
+    const darkIcon = document.querySelector('#bd-theme-icon-dark')
+    if (!lightIcon || !darkIcon) {
       return
     }
-
-    const themeSwitcherText = document.querySelector('#bd-theme-text')
-    const activeThemeIcon = document.querySelector('#bd-theme-icon-active')
-    const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
-    const iconToActive = btnToActive.querySelector('i')
-    const classesOfActiveBtn = Array.from(iconToActive.classList).
-      filter(className => className.startsWith('bi'))
-
-    document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
-      element.classList.remove('active')
-      element.setAttribute('aria-pressed', 'false')
-    })
-
-    btnToActive.classList.add('active')
-    btnToActive.setAttribute('aria-pressed', 'true')
-    activeThemeIcon.className = classesOfActiveBtn.join(' ')
-    const themeSwitcherLabel = `${themeSwitcherText.textContent} (${btnToActive.dataset.bsThemeValue})`
-    themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
-
-    if (focus) {
-      themeSwitcher.focus()
-    }
+    lightIcon.hidden = theme !== 'light'
+    darkIcon.hidden = theme !== 'dark'
   }
 
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    const storedTheme = getStoredTheme()
-    if (storedTheme !== 'light' && storedTheme !== 'dark') {
-      setTheme(getPreferredTheme())
+  const syncFromStorage = () => {
+    const theme = setTheme(readStoredTheme())
+    updateThemeButton(theme)
+  }
+
+  setTheme(readStoredTheme())
+
+  window.addEventListener('storage', event => {
+    if (event.key !== TFG_THEME_KEY && event.key !== null) {
+      return
     }
+    syncFromStorage()
   })
 
   window.addEventListener('DOMContentLoaded', () => {
-    showActiveTheme(getPreferredTheme())
+    const theme = resolvedTheme()
+    updateThemeButton(theme)
 
-    document.querySelectorAll('[data-bs-theme-value]')
-      .forEach(toggle => {
-        toggle.addEventListener('click', () => {
-          const theme = toggle.getAttribute('data-bs-theme-value')
-          setStoredTheme(theme)
-          setTheme(theme)
-          showActiveTheme(theme, true)
-        })
-      })
+    const toggle = document.querySelector('#bd-theme')
+    if (!toggle) {
+      return
+    }
+
+    toggle.addEventListener('click', () => {
+      const next = resolvedTheme() === 'dark' ? 'light' : 'dark'
+      writeStoredTheme(next)
+      setTheme(next)
+      updateThemeButton(next)
+      toggle.focus()
+    })
   })
 })()

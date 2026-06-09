@@ -22,74 +22,8 @@
     <!-- Load theme switcher JavaScript early to avoid flashes of incorrectly-themed content -->
     <script src="${root}/static/theme-switcher.js"></script>
 
-    <nav id="nav-primary" class="navbar navbar-expand-lg mb-5" data-bs-theme="dark">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="${index}">${title}</a>
-
-        <!-- Navbar toggle control for small screens -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbar-content">
-          <ul class="navbar-nav">
-            <!-- Search bar-->
-             <li class="nav-item">
-              <form class="d-flex" role="search" onsubmit="handleSearch(event)">
-                <input id="search-box" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                <button class="btn btn-outline-success" type="submit">Search</button>
-              </form>
-             </li>
-
-            <!-- Language submenu -->
-            <li class="nav-item px-2 dropdown">
-              <a class="nav-link dropdown-toggle" id="lang-dropdown-button" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-translate"></i> ${current_lang.value}
-              </a>
-              <div class="dropdown-menu" aria-labelledby="lang-dropdown-button">
-                <#list languages as lang>
-                <a href="${root}/${lang.key}/${current_category.id}.html" class="dropdown-item">${lang.value}</a>
-                </#list>
-              </div>
-            </li>
-
-            <!-- Theme switcher -->
-            <li class="nav-item ps-2 dropdown">
-              <button id="bd-theme" class="btn btn-link nav-link dropdown-toggle" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static">
-                <i id="bd-theme-icon-active"></i>
-                <span id="bd-theme-text" class="d-lg-none ms-2">Toggle theme</span>
-              </button>
-
-              <ul class="dropdown-menu dropdown-menu-end">
-                <!-- Light theme -->
-                <li>
-                  <button class="dropdown-item d-flex align-items-center active" type="button" data-bs-theme-value="light">
-                    <i class="bi bi-sun-fill me-2"></i>
-                    Light
-                  </button>
-                </li>
-
-                <!-- Dark theme -->
-                <li>
-                  <button class="dropdown-item d-flex align-items-center" type="button" data-bs-theme-value="dark">
-                    <i class="bi bi-moon-stars-fill me-2"></i>
-                    Dark
-                  </button>
-                </li>
-
-                <!-- System theme -->
-                <li>
-                  <button class="dropdown-item d-flex align-items-center" type="button" data-bs-theme-value="auto">
-                    <i class="bi bi-circle-half me-2"></i>
-                    Auto
-                  </button>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <#assign lang_page = "${current_category.id}.html">
+    <#include "includes/navbar.ftl">
 
     <div class="container">
       <div class="row">

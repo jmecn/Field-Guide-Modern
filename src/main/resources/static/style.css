@@ -7,6 +7,26 @@
     background-color: var(--bs-gray-800);
 }
 
+.handbook-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.handbook-nav-link {
+    padding: 0.25rem 0;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.handbook-theme-toggle {
+    line-height: 1;
+}
+
+.handbook-theme-toggle .bi {
+    font-size: 1.1rem;
+}
+
 .card-body > *:last-child {
     margin-bottom: 0;
 }
