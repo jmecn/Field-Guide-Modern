@@ -148,7 +148,7 @@ load_config() {
       printf 'RECIPE_BOOK_BASE_URL=%s\n' "${RECIPE_BOOK_BASE_URL:-}"
       printf 'EXPORT_ARTIFACT_NAME=%s\n' "${EXPORT_ARTIFACT_NAME:-field-guide}"
       printf 'EXPORT_CACHE_KEY_PREFIX=%s\n' "${EXPORT_CACHE_KEY_PREFIX:-fge-export}"
-      printf 'SITE_RELEASE_ASSET_NAME=%s\n' "${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar}"
+      printf 'SITE_RELEASE_ASSET_NAME=%s\n' "${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar.gz}"
       printf 'SITE_RELEASE_HASH_LENGTH=%s\n' "${SITE_RELEASE_HASH_LENGTH:-7}"
     } >> "$GITHUB_ENV"
   fi
@@ -275,7 +275,7 @@ _resolve_expected_release_tag() {
 
 _site_release_asset_exists() {
   local release_tag="${1:?release tag required}"
-  local asset_name="${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar}"
+  local asset_name="${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar.gz}"
   gh release view "$release_tag" \
     --repo "${GITHUB_REPOSITORY:?GITHUB_REPOSITORY required}" \
     --json assets \
@@ -284,7 +284,7 @@ _site_release_asset_exists() {
 
 _probe_site_release() {
   local release_tag="${1:?release tag required}"
-  local asset_name="${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar}"
+  local asset_name="${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar.gz}"
 
   if ! command -v gh >/dev/null 2>&1; then
     echo "::warning::gh CLI unavailable — cannot probe site release" >&2
@@ -432,7 +432,7 @@ publish_site_release() {
 
   local site_dir="${FGM_ROOT}/${SITE_OUTPUT_DIR:-output}"
   local build_json="$site_dir/build.json"
-  local asset_name="${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar}"
+  local asset_name="${SITE_RELEASE_ASSET_NAME:-field-guide-site.tar.gz}"
   local archive="$FGM_ROOT/$asset_name"
   local release_tag notes
 
@@ -460,7 +460,7 @@ publish_site_release() {
 
   echo "::group::Package site release (${release_tag})"
   rm -f "$archive"
-  tar -cf "$archive" -C "$site_dir" .
+  tar -czf "$archive" -C "$site_dir" .
   echo "Created ${archive} ($(du -h "$archive" | awk '{print $1}'))"
   echo "::endgroup::"
 
