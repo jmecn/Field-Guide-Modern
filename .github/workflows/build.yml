@@ -50,6 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
     outputs:
       export_needed: ${{ steps.decision.outputs.export_needed }}
       deploy_needed: ${{ steps.gates.outputs.deploy_needed }}
@@ -73,7 +74,9 @@ jobs:
         id: export_cache
         uses: actions/cache/restore@v4
         with:
-          path: .export-cache-probe
+          path: |
+            export-meta/
+            guide-export-${{ steps.gates.outputs.bundle_id }}.tar.gz
           key: ${{ steps.gates.outputs.export_cache_key }}
           lookup-only: true
 
