@@ -60,7 +60,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -75,7 +75,7 @@ jobs:
 
       - name: Probe export cache
         id: export_cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             export-meta/
@@ -105,7 +105,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -134,7 +134,7 @@ jobs:
 
       - name: Restore HMC cache
         id: hmc-restore
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ env.RUNNER_HOME }}/.minecraft
           key: hmc-${{ env.MC_VERSION }}-forge-${{ env.FORGE_BUILD }}
@@ -144,7 +144,7 @@ jobs:
 
       - name: Restore world cache
         id: world-restore
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ env.MODPACK_DIR }}/saves/emi-export
           key: emi-export-${{ env.MC_VERSION }}-${{ hashFiles(format('{0}/pakku-lock.json', env.MODPACK_DIR)) }}
@@ -176,14 +176,14 @@ jobs:
 
       - name: Save world cache
         if: success() && steps.world-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ env.MODPACK_DIR }}/saves/emi-export
           key: ${{ steps.world-restore.outputs.cache-primary-key }}
 
       - name: Save HMC cache
         if: success() && steps.hmc-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ env.RUNNER_HOME }}/.minecraft
           key: ${{ steps.hmc-restore.outputs.cache-primary-key }}
@@ -195,7 +195,7 @@ jobs:
         run: bash ci/run.sh finalize-export
 
       - name: Save export cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             export-meta/
@@ -225,7 +225,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -241,7 +241,7 @@ jobs:
 
       - name: Restore export cache
         id: export_cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             export-meta/
