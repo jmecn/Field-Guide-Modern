@@ -1,6 +1,11 @@
 :root {
-    --table-bg-dark-color: #dfe2e5;
-    --table-bg-light-color: #f8f8f8;
+    --table-border-color: #cccccc;
+    --table-stripe-bg: #eeeeee;
+}
+
+html[data-bs-theme="dark"] {
+    --table-border-color: #495057;
+    --table-stripe-bg: rgba(255, 255, 255, 0.06);
 }
 
 #nav-primary {
@@ -254,12 +259,13 @@ table {
     text-align: left;
 }
 table tr {
-    border: 1px solid #cccccc;
+    border: 1px solid var(--table-border-color);
     margin: 0;
     padding: 0;
 }
-table thead, table tr:nth-child(2n) {
-    background-color: #eeeeee;
+table thead,
+table tbody tr:nth-child(even) {
+    background-color: var(--table-stripe-bg);
 }
 table thead, table tr {
     break-inside: avoid;
@@ -267,13 +273,13 @@ table thead, table tr {
 }
 table th {
     font-weight: bold;
-    border: 1px solid #cccccc;
+    border: 1px solid var(--table-border-color);
     border-bottom: 0;
     margin: 0;
     padding: 2px 4px;
 }
 table td {
-    border: 1px solid #cccccc;
+    border: 1px solid var(--table-border-color);
     margin: 0;
     padding: 2px 4px;
 }
