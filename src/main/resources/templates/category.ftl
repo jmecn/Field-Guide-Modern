@@ -111,6 +111,6 @@
     <script src="${root}/static/tooltips.js"></script>
     <script src="${root}/static/search.js"></script>
     <link rel="stylesheet" href="${root}/static/giscus.css">
-    <script src="${root}/static/giscus-init.js"></script>
+    <script type="module" src="${root}/static/giscus-init.js"></script>
   </body>
 </html>
