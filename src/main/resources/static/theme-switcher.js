@@ -84,16 +84,32 @@
     updateThemeButton(theme)
 
     const toggle = document.querySelector('#bd-theme')
-    if (!toggle) {
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const next = resolvedTheme() === 'dark' ? 'light' : 'dark'
+        writeStoredTheme(next)
+        setTheme(next)
+        updateThemeButton(next)
+        toggle.focus()
+      })
+    }
+
+    const modpackEl = document.getElementById('modpack-version')
+    if (!modpackEl) {
       return
     }
 
-    toggle.addEventListener('click', () => {
-      const next = resolvedTheme() === 'dark' ? 'light' : 'dark'
-      writeStoredTheme(next)
-      setTheme(next)
-      updateThemeButton(next)
-      toggle.focus()
-    })
+    const buildRoot = modpackEl.getAttribute('data-build-root') || '..'
+    const buildUrl = `${buildRoot}/build.json`.replace(/\/+/g, '/')
+
+    void fetch(buildUrl)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        const value = String(data?.modpack ?? '').trim().replace(/^v/i, '')
+        if (!value) return
+        modpackEl.textContent = value
+        modpackEl.hidden = false
+      })
+      .catch(() => {})
   })
 })()

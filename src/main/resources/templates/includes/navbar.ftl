@@ -1,6 +1,9 @@
     <nav id="nav-primary" class="navbar navbar-expand-lg mb-5" data-bs-theme="dark">
       <div class="container">
-        <a class="navbar-brand fw-bold" href="${index}">${title}</a>
+        <div class="d-flex align-items-center gap-2">
+          <a class="navbar-brand fw-bold mb-0" href="${index}">${title}</a>
+          <span id="modpack-version" class="handbook-modpack-version" data-build-root="${root}" hidden></span>
+        </div>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
